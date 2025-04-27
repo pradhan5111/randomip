@@ -1,0 +1,49 @@
+clc; clear; close all;
+
+% Constants
+eps0 = 8.854e-12;         % Permittivity of free space (F/m)
+Q = 1e-6;                 % Charge in Coulombs (1 µC)
+z0 = 1;                   % Distance of real charge from the conducting plane (z = 0)
+
+% Define Grid
+Nx = 100;
+Nz = 100;
+x = linspace(-3, 3, Nx);
+z = linspace(-2, 4, Nz);
+[X, Z] = meshgrid(x, z);
+
+% Compute distances from real and image charges
+R_real = sqrt(X.^2 + (Z - z0).^2);
+R_image = sqrt(X.^2 + (Z + z0).^2);
+
+% Compute Electric Potential from both charges
+V = (1 / (4 * pi * eps0)) * (Q ./ R_real - Q ./ R_image);
+
+% Compute Electric Field from Potential
+[Ex, Ez] = gradient(-V, x(2) - x(1), z(2) - z(1));
+
+%% 1. Electric Potential Contours
+figure;
+contourf(X, Z, V, 60, 'LineColor', 'none');
+colorbar;
+xlabel('x (m)');
+ylabel('z (m)');
+title('Electric Potential Contours');
+
+%% 2. Electric Field and Equipotentials
+figure;
+quiver(X, Z, Ex, Ez, 'k');
+hold on;
+contour(X, Z, V, 30, 'k');  % Equipotential lines
+xlabel('x (m)');
+ylabel('z (m)');
+title('Electric Field and Equipotential Lines');
+
+%% 3. 3D Surface Plot of Electric Potential
+figure;
+surf(X, Z, V, 'EdgeColor', 'none');
+colorbar;
+xlabel('x (m)');
+ylabel('z (m)');
+zlabel('Potential (V)');
+title('3D Surface Plot of Electric Potential');
